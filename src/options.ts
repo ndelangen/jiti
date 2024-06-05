@@ -1,5 +1,4 @@
 import { destr } from "destr";
-import { lt } from "semver";
 import objectHash from "object-hash";
 
 import type { JITIOptions } from "./types";
@@ -22,7 +21,7 @@ const jitiDefaults: JITIOptions = {
   interopDefault: false,
   esmResolve: _EnvESMResolve || false,
   cacheVersion: "7",
-  legacy: lt(process.version || "0.0.0", "14.0.0"),
+  legacy: false,
   extensions: [".js", ".mjs", ".cjs", ".ts", ".mts", ".cts", ".json"],
   alias: _EnvAlias,
   nativeModules: _EnvNative || [],

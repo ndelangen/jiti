@@ -2,3 +2,4 @@ test/fixtures/error-parse/index.ts
 coverage
 dist
 CHANGELOG.md
+**/dist

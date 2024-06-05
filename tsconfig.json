@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
@@ -8,7 +8,11 @@
     "declarationDir": "dist",
     "declaration": true,
     "experimentalDecorators": true,
-    "types": ["node"]
+    "noEmit": true,
+    "types": ["node"],
+    "paths": {
+      "./vendor/babel/dist/babel.cjs": ["./vendor/babel/src/index.ts"],
+    }
   },
-  "include": ["src"]
+  "include": ["src", "vendor/babel/src", "register.cjs"]
 }

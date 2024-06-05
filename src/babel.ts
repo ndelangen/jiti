@@ -1,11 +1,27 @@
-import { transformSync } from "@babel/core";
+import {
+  BabelPluginDynamicImportNode,
+  BabelPluginParameterDecorator,
+  BabelPluginProposalDecorators,
+  BabelPluginSyntaxImportAssertions,
+  BabelPluginTransformImportMeta,
+  BabelPluginTransformNullishCoalescingOperator,
+  BabelPluginTransformOptionalChaining,
+  BabelPluginTransformTypescript,
+  BabelPluginTransformTypescriptMeta,
+  BabelTransformExportNamespaceFrom,
+  BabelTransformModulesCommonJS,
+  BabelPluginImportMetaEnv,
+  BabelSyntaxClassProperties,
+  transformSync
+  // @ts-ignore
+} from "../vendor/babel/dist/babel.cjs";
+
 import type {
   TransformOptions as BabelTransformOptions,
   PluginItem,
 } from "@babel/core";
+
 import { TransformOptions, TRANSFORM_RESULT } from "./types";
-import { TransformImportMetaPlugin } from "./plugins/babel-plugin-transform-import-meta";
-import { importMetaEnvPlugin } from "./plugins/import-meta-env";
 
 export default function transform(opts: TransformOptions): TRANSFORM_RESULT {
   const _opts: BabelTransformOptions & { plugins: PluginItem[] } = {
@@ -19,36 +35,36 @@ export default function transform(opts: TransformOptions): TRANSFORM_RESULT {
     ...opts.babel,
     plugins: [
       [
-        require("@babel/plugin-transform-modules-commonjs"),
+        BabelTransformModulesCommonJS,
         { allowTopLevelThis: true },
       ],
-      [require("babel-plugin-dynamic-import-node"), { noInterop: true }],
-      [TransformImportMetaPlugin, { filename: opts.filename }],
-      [require("@babel/plugin-syntax-class-properties")],
-      [require("@babel/plugin-transform-export-namespace-from")],
-      [importMetaEnvPlugin],
+      [BabelPluginDynamicImportNode, { noInterop: true }],
+      [BabelPluginTransformImportMeta, { filename: opts.filename }],
+      [BabelSyntaxClassProperties],
+      [BabelTransformExportNamespaceFrom],
+      [BabelPluginImportMetaEnv],
     ],
   };
 
   if (opts.ts) {
     _opts.plugins.push([
-      require("@babel/plugin-transform-typescript"),
+      BabelPluginTransformTypescript,
       { allowDeclareFields: true },
     ]);
     // `unshift` because these plugin must come before `@babel/plugin-syntax-class-properties`
     _opts.plugins.unshift(
-      [require("babel-plugin-transform-typescript-metadata")],
-      [require("@babel/plugin-proposal-decorators"), { legacy: true }],
+      [BabelPluginTransformTypescriptMeta],
+      [BabelPluginProposalDecorators, { legacy: true }],
     );
-    _opts.plugins.push(require("babel-plugin-parameter-decorator"));
-    _opts.plugins.push(require("@babel/plugin-syntax-import-assertions"));
+    _opts.plugins.push(BabelPluginParameterDecorator);
+    _opts.plugins.push(BabelPluginSyntaxImportAssertions);
   }
 
   if (opts.legacy) {
     _opts.plugins.push(
-      require("@babel/plugin-transform-nullish-coalescing-operator"),
+      BabelPluginTransformNullishCoalescingOperator,
     );
-    _opts.plugins.push(require("@babel/plugin-transform-optional-chaining"));
+    _opts.plugins.push(BabelPluginTransformOptionalChaining);
   }
 
   if (opts.babel && Array.isArray(opts.babel.plugins)) {

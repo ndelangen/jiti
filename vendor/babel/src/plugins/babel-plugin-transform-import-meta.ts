@@ -15,34 +15,33 @@ export function TransformImportMetaPlugin(
       Program(path) {
         const metas: Array<NodePath<MemberExpression>> = [];
 
-        path.traverse({
-          MemberExpression(memberExpPath) {
-            const { node } = memberExpPath;
+      path.traverse({
+        MemberExpression(memberExpPath) {
+            const {node} = memberExpPath;
 
-            if (
-              node.object.type === "MetaProperty" &&
-              node.object.meta.name === "import" &&
-              node.object.property.name === "meta" &&
-              node.property.type === "Identifier" &&
-              node.property.name === "url"
-            ) {
-              metas.push(memberExpPath);
+      if (
+      node.object.type === "MetaProperty" &&
+      node.object.meta.name === "import" &&
+      node.object.property.name === "meta" &&
+      node.property.type === "Identifier" &&
+      node.property.name === "url"
+      ) {
+        metas.push(memberExpPath);
             }
           },
         });
 
-        if (metas.length === 0) {
+      if (metas.length === 0) {
           return;
         }
 
-        for (const meta of metas) {
-          meta.replaceWith(
-            smart.ast`${
-              opts.filename
-                ? JSON.stringify(pathToFileURL(opts.filename))
-                : "require('url').pathToFileURL(__filename).toString()"
+      for (const meta of metas) {
+        meta.replaceWith(
+          smart.ast`${opts.filename
+              ? JSON.stringify(pathToFileURL(opts.filename))
+              : "require('url').pathToFileURL(__filename).toString()"
             }` as Statement,
-          );
+        );
         }
       },
     },
